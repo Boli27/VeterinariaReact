@@ -1,14 +1,32 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Alerta from "./Alerta";
+import Paciente from "./Paciente";
 
-const Formulario = ({ pacientes, setPacientes, borrarLocal}) => {
+const Formulario = ({ pacientes, setPacientes, paciente}) => {
 
     const [nombre, setNombre] = useState("");
     const [propietario, setPropietario] = useState("");
     const [email, setEmail] = useState("");
     const [alta, setAlta] = useState("");
     const [sintomas, setSintomas] = useState("");
-    const [alerta, setAlerta] = useState({})
+    const [alerta, setAlerta] = useState({});
+
+    useEffect(()=>{
+
+        if(Object.keys(paciente).length !==0){
+            setNombre(paciente.nombre)
+            setPropietario(paciente.propietario)
+            setEmail(paciente.email)
+            setAlta(paciente.alta)
+            setSintomas(paciente.sintomas)
+        }
+
+    },[paciente])
+
+    const generarid=()=>{
+        return Math.random().toString(32).substring(2);
+    }
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -25,16 +43,19 @@ const Formulario = ({ pacientes, setPacientes, borrarLocal}) => {
             mensaje: "Paciente registrado"
         })
 
+
+        const nuevoPaciente={
+            nombre,
+            propietario,
+            email,
+            alta,
+            sintomas,
+            id:generarid()
+        }
         setPacientes(
             [
                 ...pacientes,
-                {
-                    nombre,
-                    propietario,
-                    email,
-                    alta,
-                    sintomas
-                }
+                nuevoPaciente
             ]
         )
 
@@ -43,6 +64,10 @@ const Formulario = ({ pacientes, setPacientes, borrarLocal}) => {
         setEmail("")
         setAlta("")
         setSintomas("")
+
+        setTimeout(()=>{
+            setAlerta({})
+        },3000)
     }
 
     const { mensaje } = alerta;
@@ -93,7 +118,6 @@ const Formulario = ({ pacientes, setPacientes, borrarLocal}) => {
                 <input type="submit" className="bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-700 hover:cursor-pointer transition-all" value="Agregar Paciente" />
 
 
-                <input type="button" value="Borrar Todo" onClick={borrarLocal} />
             </form>
 
         </div>
